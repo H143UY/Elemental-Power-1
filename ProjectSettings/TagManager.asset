@@ -8,6 +8,8 @@ TagManager:
   - DiemA
   - DiemB
   - Enemy
+  - player att
+  - enemy att
   layers:
   - Default
   - TransparentFX

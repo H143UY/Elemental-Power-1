@@ -1,5 +1,6 @@
 public enum EventID
 {
-   hit_dame,
-
+   playerhit_dame,
+   //enemy
+    hit_dame,
 }

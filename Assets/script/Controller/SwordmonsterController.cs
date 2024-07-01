@@ -22,7 +22,6 @@ public class SwordmonsterController : ObjectController
     {
         this.RegisterListener(EventID.hit_dame, (sender, param) =>
         {
-            Debug.Log("a");
             hurt = true;
         });
     }
@@ -78,7 +77,7 @@ public class SwordmonsterController : ObjectController
         else
         {
             TimeToAttack += Time.deltaTime;
-            if (TimeToAttack > 0.6f)
+            if (TimeToAttack > 1f)
             {
                 if (CheckAttack)
                 {
@@ -103,11 +102,18 @@ public class SwordmonsterController : ObjectController
     {
         if (collision.gameObject.tag == "DiemA")
         {
-            dir = new Vector3(1, 0, 0);
+            if (!IsAttack)
+            {
+                dir = new Vector3(1, 0, 0);
+
+            }
         }
         if (collision.gameObject.tag == "DiemB")
         {
-            dir = new Vector3(-1, 0, 0);
+            if (!IsAttack)
+            {
+                dir = new Vector3(-1, 0, 0);
+            }
         }
     }
     private void StopAttack()

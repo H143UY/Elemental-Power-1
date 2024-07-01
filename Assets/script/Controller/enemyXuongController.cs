@@ -24,12 +24,7 @@ public class enemyXuongController : ObjectController
     {
         this.RegisterListener(EventID.hit_dame, (sender, param) =>
         {
-            if (DuocPhongThu)
-            {
-                Shield = true;
-                run = false;
-                DuocPhongThu = false;
-            }
+            
         });
     }
     private void Start()
@@ -101,14 +96,6 @@ public class enemyXuongController : ObjectController
         animator.SetBool("shield", Shield);
         animator.SetBool("attack", attackPlayer);
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "")
-        {
-            run = false;
-        }
-
-    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "DiemA")
@@ -118,6 +105,15 @@ public class enemyXuongController : ObjectController
         if (collision.gameObject.tag == "DiemB")
         {
             dir = new Vector3(-1, 0, 0);
+        }
+        if (collision.gameObject.tag == "player att")
+        {
+            if (DuocPhongThu)
+            {
+                Shield = true;
+                run = false;
+                DuocPhongThu = false;
+            }
         }
     }
     public void StopAttack()

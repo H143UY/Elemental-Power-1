@@ -10,7 +10,7 @@ public class PlayerController : ObjectController
     private float horizontal;
     private float vertical;
     public float JumpForce;
-
+    private Vector2 Direction;
     private Animator anim;
     private Rigidbody2D rig;
     public bool isground;
@@ -19,16 +19,14 @@ public class PlayerController : ObjectController
     public bool loopMediate = false;
 
     [Header("tan cong")]
-    public int combo =1 ;
+    public int combo = 1;
     public bool attacking;
     public float comboTiming;
     private float comboTempo;
     private int comboNumber = 3;
     private bool stopcombo = false;
-    [SerializeField] private Transform attackpoin;
-    public float attackrange;
-    public LayerMask enemylayer;
 
+    public bool hitdame = false;
 
     [Header("defend")]
     public bool defend = false;
@@ -36,6 +34,10 @@ public class PlayerController : ObjectController
     {
         if (Instance == null)
             Instance = this;
+        this.RegisterListener(EventID.playerhit_dame, (sender, param) =>
+        {
+            hitdame = true;
+        });
     }
     void Start()
     {
@@ -47,29 +49,32 @@ public class PlayerController : ObjectController
 
     void Update()
     {
+        DiChuyen();
         vertical = rig.velocity.y;
-        horizontal = Input.GetAxis("Horizontal");
-        if (Input.GetKeyDown(KeyCode.W) && isground)
-        {
-            Jump();
-        }
+
         Thien();
-        Vector3 direction = new Vector3(horizontal, 0, 0);
-        Move(direction);
         Flip();
         AnimPlayer();
         ComboAttack();
         PhongThu();
     }
-    private void TanCong()
+    private void DiChuyen()
     {
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackpoin.position, attackrange, enemylayer);
-        foreach (Collider2D enemy in hitEnemies)
+        if (!hitdame)
         {
-            //enemy.GetComponent<HpEnemyController>().TakeDamage(70);
-            this.PostEvent(EventID.hit_dame);
-            Debug.Log("abb");
+            horizontal = 0;
+            if (Input.GetKeyDown(KeyCode.W) && isground)
+            {
+                Jump();
+            }
+            horizontal = Input.GetAxis("Horizontal");
+            Direction = new Vector3(horizontal, 0);
         }
+        else
+        {
+            Direction = new Vector3(0, 0);
+        }
+        Move(Direction);
     }
     private void Thien()
     {
@@ -86,31 +91,29 @@ public class PlayerController : ObjectController
     public void ComboAttack()
     {
         comboTempo -= Time.deltaTime;
-        if(Input.GetKeyDown(KeyCode.J) && comboTempo <0 && !stopcombo)
+        if (Input.GetKeyDown(KeyCode.J) && comboTempo < 0 && !stopcombo)
         {
-            TanCong();
             attacking = true;
-            anim.SetTrigger("attack"+combo);
+            anim.SetTrigger("attack" + combo);
             comboTempo = comboTiming;
         }
-        else if (Input.GetKeyDown(KeyCode.J) && comboTempo > 0 && comboTempo < 0.4f && !stopcombo)
+        else if (Input.GetKeyDown(KeyCode.J) && comboTempo > 0 && comboTempo < 0.5f && !stopcombo)
         {
-            TanCong();
             attacking = true;
             combo++;
-            if(combo >= comboNumber)
+            if (combo >= comboNumber)
             {
                 stopcombo = true;
                 combo = 3;
             }
-            anim.SetTrigger("attack"+combo);
+            anim.SetTrigger("attack" + combo);
             comboTempo = comboTiming;
         }
-        else if(comboTempo <0 && !Input.GetKeyDown(KeyCode.J))
+        else if (comboTempo < 0 && !Input.GetKeyDown(KeyCode.J))
         {
             attacking = false;
         }
-        if(comboTempo < 0)
+        if (comboTempo < 0)
         {
             combo = 1;
         }
@@ -136,9 +139,13 @@ public class PlayerController : ObjectController
         anim.SetFloat("run", Mathf.Abs(horizontal));
         anim.SetFloat("jump", vertical);
         anim.SetBool("isground", isground);
-        anim.SetBool("mediate",mediate);
+        anim.SetBool("mediate", mediate);
         anim.SetBool("loop mediate", loopMediate);
         anim.SetBool("defend", defend);
+        if (hitdame == true)
+        {
+            anim.SetTrigger("hit");
+        }
     }
     public void PhongThu()
     {
@@ -153,24 +160,23 @@ public class PlayerController : ObjectController
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag== "san")
+        if (collision.gameObject.tag == "san")
         {
             isground = true;
         }
     }
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawWireSphere(attackpoin.position, attackrange);
-        Gizmos.color = Color.red;
-    }
-
     private void MediateLoop()
     {
         loopMediate = true;
+    }
+    private void StopHit()
+    {
+        hitdame = false;
     }
     private void ResetCombo()
     {
         combo = 1;
         stopcombo = false;
     }
+
 }
