@@ -17,7 +17,12 @@ public class PlayerController : ObjectController
     [Header("thien")]
     public bool mediate = false;
     public bool loopMediate = false;
-
+    [Header("Roll")]
+    public bool CanRoll = false;
+    private float TimeRollCollDown;
+    public float TimeRoll;
+    public float TimeCanRoll;
+    public float powerRoll = 3; 
     [Header("tan cong")]
     public int combo = 1;
     public bool attacking;
@@ -45,13 +50,15 @@ public class PlayerController : ObjectController
         rig = GetComponent<Rigidbody2D>();
         comboTiming = 0.6f;
         comboTempo = comboTiming;
+        TimeRollCollDown = 0.9f;
+        TimeRoll = TimeRollCollDown;
     }
 
     void Update()
     {
         DiChuyen();
         vertical = rig.velocity.y;
-
+        Roll();
         Thien();
         Flip();
         AnimPlayer();
@@ -118,6 +125,31 @@ public class PlayerController : ObjectController
             combo = 1;
         }
     }
+    public void Roll()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if(TimeCanRoll > 1.5f)
+            {
+                CanRoll = true;
+            }
+        }
+        if (CanRoll)
+        {
+            rig.velocity = new Vector2(transform.localScale.x * powerRoll, 0f);
+            TimeRoll -= Time.deltaTime;
+            if (TimeRoll <= 0)
+            {
+                CanRoll = false;
+                TimeRoll = TimeRollCollDown;
+                TimeCanRoll = 0;
+            }
+        }
+        else if (!CanRoll && TimeCanRoll < 1.53f)
+        {
+            TimeCanRoll += Time.deltaTime;
+        }
+    }
     public void Jump()
     {
         rig.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
@@ -146,6 +178,7 @@ public class PlayerController : ObjectController
         {
             anim.SetTrigger("hit");
         }
+        anim.SetBool("roll", CanRoll);
     }
     public void PhongThu()
     {

@@ -24,11 +24,11 @@ public class HpEnemyController : IndexController
         if (collision.gameObject.tag == "player att")
         {
             TakeDamage(30);
-            SetIndex(CurrentHp);
         }
     }
     public void TakeDamage(float dame)
     {
         CurrentHp -= dame;
+        SetIndex(CurrentHp);
     }
 }
