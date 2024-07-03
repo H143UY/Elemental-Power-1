@@ -10,6 +10,8 @@ TagManager:
   - Enemy
   - player att
   - enemy att
+  - HB air att
+  - HB skill
   layers:
   - Default
   - TransparentFX

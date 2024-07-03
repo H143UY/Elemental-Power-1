@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : ObjectController
 {
     public static PlayerController Instance;
+    public ManaController mana;
     [Header("di chuyển")]
     private float horizontal;
     private float vertical;
@@ -17,12 +18,13 @@ public class PlayerController : ObjectController
     [Header("thien")]
     public bool mediate = false;
     public bool loopMediate = false;
+    private float plustimemana;
     [Header("Roll")]
     public bool CanRoll = false;
     private float TimeRollCollDown;
     public float TimeRoll;
     public float TimeCanRoll;
-    public float powerRoll = 3; 
+    public float powerRoll = 3;
     [Header("tan cong")]
     public int combo = 1;
     public bool attacking;
@@ -33,6 +35,9 @@ public class PlayerController : ObjectController
 
     public bool hitdame = false;
 
+    [Header("Skill")]
+    public bool skill = false;
+    public bool air_attack = false;
     [Header("defend")]
     public bool defend = false;
     private void Awake()
@@ -48,10 +53,12 @@ public class PlayerController : ObjectController
     {
         anim = GetComponent<Animator>();
         rig = GetComponent<Rigidbody2D>();
+        mana = GetComponent<ManaController>();
         comboTiming = 0.6f;
         comboTempo = comboTiming;
-        TimeRollCollDown = 0.9f;
+        TimeRollCollDown = 1f;
         TimeRoll = TimeRollCollDown;
+        plustimemana = 0;
     }
 
     void Update()
@@ -64,6 +71,8 @@ public class PlayerController : ObjectController
         AnimPlayer();
         ComboAttack();
         PhongThu();
+        Skill();
+        AirAttack();
     }
     private void DiChuyen()
     {
@@ -88,11 +97,39 @@ public class PlayerController : ObjectController
         if (Input.GetKey(KeyCode.L))
         {
             mediate = true;
+            plustimemana += Time.deltaTime;
+            if(plustimemana > 1f)
+            {
+                mana.CongMana(10);
+                plustimemana = 0;
+            }
         }
         else
         {
             mediate = false;
             loopMediate = false;
+            plustimemana = 0;
+        }
+
+    }
+    public void AirAttack()
+    {
+        if (Input.GetKeyDown(KeyCode.U) && !air_attack)
+        {
+            if (mana != null && mana.TruMana(30))
+            {
+                air_attack = true;
+            }
+        }
+    }
+    public void Skill()
+    {
+        if (Input.GetKeyDown(KeyCode.I) && !skill)
+        {
+            if (mana != null && mana.TruMana(70))
+            {
+                skill = true;
+            }
         }
     }
     public void ComboAttack()
@@ -129,7 +166,7 @@ public class PlayerController : ObjectController
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if(TimeCanRoll > 1.5f)
+            if (TimeCanRoll > 1.5f)
             {
                 CanRoll = true;
             }
@@ -179,6 +216,8 @@ public class PlayerController : ObjectController
             anim.SetTrigger("hit");
         }
         anim.SetBool("roll", CanRoll);
+        anim.SetBool("skill", skill);
+        anim.SetBool("air attack", air_attack);
     }
     public void PhongThu()
     {
@@ -211,5 +250,12 @@ public class PlayerController : ObjectController
         combo = 1;
         stopcombo = false;
     }
-
+    private void ResetSkill()
+    {
+        skill = false;
+    }
+    private void ResetAirAttack()
+    {
+        air_attack = false;
+    }
 }

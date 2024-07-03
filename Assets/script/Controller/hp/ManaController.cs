@@ -14,14 +14,30 @@ public class ManaController : IndexController
 
     void Update()
     {
+        SetIndex(CurrentMana);
         if (CurrentMana <= 0)
         {
             CurrentMana = 0;
         }
+        if(CurrentMana >= MaxMana)
+        {
+            CurrentMana = MaxMana;
+        }
     }
-    public void TruMana(float dame)
+    public bool TruMana(float mana)
     {
-        CurrentMana -= dame;
-        SetIndex(CurrentMana);
+        if (CurrentMana > mana)
+        {
+            CurrentMana -= mana;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public void CongMana(float amount)
+    {
+        CurrentMana += amount;
     }
 }
