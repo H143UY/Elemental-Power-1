@@ -1,16 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class SwordmonsterController : ObjectController
+public class QuaiBayController : ObjectController
 {
     private HpEnemyController hpEnemyController;
     private Vector3 dir;
     private Animator animator;
-    private Rigidbody2D rig;
     [Header(" patrolling")]
-    public bool run;
+    public bool fly;
     [Header(" bi tan cong")]
     private bool hit = false;
     [Header(" attack")]
@@ -33,60 +31,56 @@ public class SwordmonsterController : ObjectController
     void Start()
     {
         hpEnemyController = GetComponent<HpEnemyController>();
-        rig = GetComponent<Rigidbody2D>();
         CheckAttack = false;
         IsAttack = false;
         hit = false;
-        run = true;
+        fly = true;
         animator = GetComponent<Animator>();
         dir = new Vector3(-1, 0, 0);
     }
 
     void Update()
     {
-        if (run)
+        if (fly)
         {
             Move(dir);
         }
         Flip();
         Check();
         AnimEnemy();
-        if (hit)
+        if(hit)
         {
-            run = false;
+            fly = false;
         }
     }
     private void Flip()
     {
         if (dir.x > 0)
         {
-            this.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            this.gameObject.transform.localScale = new Vector3(-1, 1, 1);
 
         }
         else if (dir.x < 0)
         {
-            this.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+            this.gameObject.transform.localScale = new Vector3(1, 1, 1);
         }
     }
     private void Check()
     {
-        if (!hit)
-        {
-            CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distance, LayerEnem);
-        }
-        if (CheckAttack && !hit)
+        CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distance, LayerEnem);
+        if (CheckAttack)
         {
             IsAttack = true;
         }
         else if (!CheckAttack && !IsAttack)
         {
-            run = true;
+            fly = true;
         }
 
         if (IsAttack == true)
         {
             animator.SetTrigger("is attack");
-            run = false;
+            fly = false;
         }
         else
         {
@@ -109,16 +103,15 @@ public class SwordmonsterController : ObjectController
     }
     void AnimEnemy()
     {
-        animator.SetBool("walk", run);
+        animator.SetBool("fly", fly);
         animator.SetBool("can attack", IsAttack);
         animator.SetBool("hit", hit);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "player att")
+        if (collision.gameObject.tag == "player att")
         {
             hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
-
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -141,7 +134,6 @@ public class SwordmonsterController : ObjectController
         if (collision.gameObject.tag == "HB skill")
         {
             hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
-            rig.AddForce(new Vector2(0, 1) * 10, ForceMode2D.Impulse);
         }
         if (collision.gameObject.tag == "HB air att")
         {
@@ -157,3 +149,4 @@ public class SwordmonsterController : ObjectController
         hit = false;
     }
 }
+

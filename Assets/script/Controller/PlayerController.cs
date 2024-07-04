@@ -7,10 +7,15 @@ public class PlayerController : ObjectController
 {
     public static PlayerController Instance;
     public ManaController mana;
+    [Header("Chỉ số người chơi")]
+    public float hand_damage;
+    public float skill_damage;
+    public float air_damage;
+    public float JumpForce;
+
     [Header("di chuyển")]
     private float horizontal;
     private float vertical;
-    public float JumpForce;
     private Vector2 Direction;
     private Animator anim;
     private Rigidbody2D rig;
@@ -32,7 +37,6 @@ public class PlayerController : ObjectController
     private float comboTempo;
     private int comboNumber = 3;
     private bool stopcombo = false;
-
     public bool hitdame = false;
 
     [Header("Skill")]

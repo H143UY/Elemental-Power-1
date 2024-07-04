@@ -1,14 +1,15 @@
-﻿using System.Collections;
+﻿using Core.Pool;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HpEnemyController : IndexController
+public class HpEnemyController : MonoBehaviour
 {
     public float MaxHp;
     public float CurrentHp;
     void Start()
     {
-        SetMaxIndex(MaxHp);
+        //SetMaxIndex(MaxHp);
         CurrentHp = MaxHp;
     }
 
@@ -17,18 +18,27 @@ public class HpEnemyController : IndexController
         if (CurrentHp <= 0)
         {
             CurrentHp = 0;
-        }
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "player att")
-        {
-            TakeDamage(30);
+            SmartPool.Instance.Despawn(this.gameObject);
         }
     }
     public void TakeDamage(float dame)
     {
-        CurrentHp -= dame;
-        SetIndex(CurrentHp);
+        this.PostEvent(EventID.hit_dame);
+        if(dame >= MaxHp)
+        {
+            if(CurrentHp == MaxHp)
+            {
+                CurrentHp = 1;
+            }
+            else
+            {
+                CurrentHp -= dame;
+            }
+        }
+        else
+        {
+            CurrentHp -= dame;
+        }
+        //SetIndex(CurrentHp);
     }
 }
