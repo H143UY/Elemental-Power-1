@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -76,7 +76,7 @@ public class SwordmonsterController : ObjectController
         }
         if (CheckAttack && !hit)
         {
-            IsAttack = true;
+            run = false;
         }
         else if (!CheckAttack && !IsAttack)
         {
@@ -87,13 +87,14 @@ public class SwordmonsterController : ObjectController
         {
             animator.SetTrigger("is attack");
             run = false;
+            CheckAttack = false;
         }
         else
         {
             TimeToAttack += Time.deltaTime;
             if (TimeToAttack > 1f)
             {
-                if (CheckAttack)
+                if (CheckAttack && !hit)
                 {
                     IsAttack = true;
                     TimeToAttack = 0;

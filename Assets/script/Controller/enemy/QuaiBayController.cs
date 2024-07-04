@@ -67,10 +67,13 @@ public class QuaiBayController : ObjectController
     }
     private void Check()
     {
-        CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distance, LayerEnem);
-        if (CheckAttack)
+        if (!hit)
         {
-            IsAttack = true;
+            CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distance, LayerEnem);
+        }
+        if (CheckAttack && !hit)
+        {
+            fly = false;
         }
         else if (!CheckAttack && !IsAttack)
         {
@@ -81,13 +84,14 @@ public class QuaiBayController : ObjectController
         {
             animator.SetTrigger("is attack");
             fly = false;
+            CheckAttack = false;
         }
         else
         {
             TimeToAttack += Time.deltaTime;
             if (TimeToAttack > 1f)
             {
-                if (CheckAttack)
+                if (CheckAttack && !hit)
                 {
                     IsAttack = true;
                     TimeToAttack = 0;
