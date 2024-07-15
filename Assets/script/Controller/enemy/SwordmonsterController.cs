@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Core.Pool;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 public class SwordmonsterController : ObjectController
 {
     private HpEnemyController hpEnemyController;
+    private BoxCollider2D boxcolider;
     private Vector3 dir;
     private Animator animator;
     private Rigidbody2D rig;
@@ -22,16 +24,10 @@ public class SwordmonsterController : ObjectController
     public LayerMask LayerEnem;
     private void Awake()
     {
-        this.RegisterListener(EventID.hit_dame, (sender, param) =>
-        {
-            if (!hit)
-            {
-                hit = true;
-            }
-        });
     }
     void Start()
     {
+        boxcolider = GetComponent<BoxCollider2D>();
         hpEnemyController = GetComponent<HpEnemyController>();
         rig = GetComponent<Rigidbody2D>();
         CheckAttack = false;
@@ -54,6 +50,14 @@ public class SwordmonsterController : ObjectController
         if (hit)
         {
             run = false;
+        }
+        if(hpEnemyController.CurrentHp <= 0)
+        {
+            animator.SetTrigger("die");
+            CheckAttack = false;
+            IsAttack = false;
+            boxcolider.enabled = false;
+            rig.gravityScale = 0;
         }
     }
     private void Flip()
@@ -116,10 +120,13 @@ public class SwordmonsterController : ObjectController
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "player att")
+        if (collision.gameObject.tag == "player att")
         {
             hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
-
+            if (!hit)
+            {
+                hit = true;
+            }
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -141,11 +148,20 @@ public class SwordmonsterController : ObjectController
         }
         if (collision.gameObject.tag == "HB skill")
         {
+            if (!hit)
+            {
+                hit = true;
+            }
             hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
             rig.AddForce(new Vector2(0, 1) * 10, ForceMode2D.Impulse);
         }
         if (collision.gameObject.tag == "HB air att")
         {
+            if (!hit)
+            {
+                hit = true;
+            }
+            rig.velocity = new Vector2(Mathf.Sign(PlayerController.Instance.transform.position.x - gameObject.transform.position.x) * -8, 4);
             hpEnemyController.TakeDamage(PlayerController.Instance.air_damage);
         }
     }
@@ -156,5 +172,10 @@ public class SwordmonsterController : ObjectController
     private void Hitfalse()
     {
         hit = false;
+        run = true;
+    }
+    private void Die()
+    {
+        SmartPool.Instance.Despawn(this.gameObject);
     }
 }

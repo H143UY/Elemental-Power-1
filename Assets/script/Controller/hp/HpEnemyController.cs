@@ -18,12 +18,11 @@ public class HpEnemyController : MonoBehaviour
         if (CurrentHp <= 0)
         {
             CurrentHp = 0;
-            SmartPool.Instance.Despawn(this.gameObject);
+            this.PostEvent(EventID.die);
         }
     }
     public void TakeDamage(float dame)
     {
-        this.PostEvent(EventID.hit_dame);
         if(dame >= MaxHp)
         {
             if(CurrentHp == MaxHp)
@@ -39,6 +38,5 @@ public class HpEnemyController : MonoBehaviour
         {
             CurrentHp -= dame;
         }
-        //SetIndex(CurrentHp);
     }
 }

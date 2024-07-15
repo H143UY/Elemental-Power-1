@@ -20,13 +20,10 @@ public class QuaiBayController : ObjectController
     public LayerMask LayerEnem;
     private void Awake()
     {
-        this.RegisterListener(EventID.hit_dame, (sender, param) =>
-        {
-            if (!hit)
-            {
-                hit = true;
-            }
-        });
+        //this.RegisterListener(EventID.hit_dame, (sender, param) =>
+        //{
+           
+        //});
     }
     void Start()
     {
@@ -116,6 +113,10 @@ public class QuaiBayController : ObjectController
         if (collision.gameObject.tag == "player att")
         {
             hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
+            if (!hit)
+            {
+                hit = true;
+            }
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -138,10 +139,18 @@ public class QuaiBayController : ObjectController
         if (collision.gameObject.tag == "HB skill")
         {
             hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
+            if (!hit)
+            {
+                hit = true;
+            }
         }
         if (collision.gameObject.tag == "HB air att")
         {
             hpEnemyController.TakeDamage(PlayerController.Instance.air_damage);
+            if (!hit)
+            {
+                hit = true;
+            }
         }
     }
     private void StopAttack()

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerController : ObjectController
 {
+    private HpPlayerController hpPlayer;
+    private CapsuleCollider2D capsul;
     public static PlayerController Instance;
     public ManaController mana;
     [Header("Chỉ số người chơi")]
@@ -55,6 +57,8 @@ public class PlayerController : ObjectController
     }
     void Start()
     {
+        capsul = GetComponent<CapsuleCollider2D>();
+        hpPlayer = GetComponent<HpPlayerController>();
         anim = GetComponent<Animator>();
         rig = GetComponent<Rigidbody2D>();
         mana = GetComponent<ManaController>();
@@ -80,7 +84,7 @@ public class PlayerController : ObjectController
     }
     private void DiChuyen()
     {
-        if (!hitdame)
+        if (!hitdame && !skill)
         {
             horizontal = 0;
             if (Input.GetKeyDown(KeyCode.W) && isground)
@@ -128,7 +132,7 @@ public class PlayerController : ObjectController
     }
     public void Skill()
     {
-        if (Input.GetKeyDown(KeyCode.I) && !skill)
+        if (Input.GetKeyDown(KeyCode.I) && !skill && isground)
         {
             if (mana != null && mana.TruMana(70))
             {
@@ -172,7 +176,9 @@ public class PlayerController : ObjectController
         {
             if (TimeCanRoll > 1.5f)
             {
+                capsul.enabled = false;
                 CanRoll = true;
+                rig.gravityScale = 0;
             }
         }
         if (CanRoll)
@@ -182,6 +188,8 @@ public class PlayerController : ObjectController
             if (TimeRoll <= 0)
             {
                 CanRoll = false;
+                capsul.enabled = true;
+                rig.gravityScale = 3;
                 TimeRoll = TimeRollCollDown;
                 TimeCanRoll = 0;
             }
@@ -198,11 +206,11 @@ public class PlayerController : ObjectController
     }
     public void Flip()
     {
-        if (horizontal > 0)
+        if (horizontal > 0 && !skill)
         {
             transform.localScale = new Vector3(1, 1, 1);
         }
-        else if (horizontal < 0)
+        else if (horizontal < 0 && !skill)
         {
             transform.localScale = new Vector3(-1, 1, 1);
         }
@@ -239,6 +247,23 @@ public class PlayerController : ObjectController
         if (collision.gameObject.tag == "san")
         {
             isground = true;
+        }
+        if (collision.gameObject.tag == "Enemy")
+        {
+            if (!defend)
+            {
+                hpPlayer.TakeDamage(20);
+            }
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "enemy att")
+        {
+            if(!defend || !CanRoll)
+            {
+                hpPlayer.TakeDamage(40);
+            }
         }
     }
     private void MediateLoop()
