@@ -102,11 +102,11 @@ public class PlayerController : ObjectController
     }
     private void Thien()
     {
-        if (Input.GetKey(KeyCode.L))
+        if (Input.GetKey(KeyCode.L) && !hitdame)
         {
             mediate = true;
             plustimemana += Time.deltaTime;
-            if(plustimemana > 1f)
+            if (plustimemana > 1f)
             {
                 mana.CongMana(10);
                 plustimemana = 0;
@@ -122,7 +122,7 @@ public class PlayerController : ObjectController
     }
     public void AirAttack()
     {
-        if (Input.GetKeyDown(KeyCode.U) && !air_attack)
+        if (Input.GetKeyDown(KeyCode.U) && !air_attack && !hitdame)
         {
             if (mana != null && mana.TruMana(30))
             {
@@ -132,7 +132,7 @@ public class PlayerController : ObjectController
     }
     public void Skill()
     {
-        if (Input.GetKeyDown(KeyCode.I) && !skill && isground)
+        if (Input.GetKeyDown(KeyCode.I) && !skill && isground && !hitdame)
         {
             if (mana != null && mana.TruMana(70))
             {
@@ -143,13 +143,13 @@ public class PlayerController : ObjectController
     public void ComboAttack()
     {
         comboTempo -= Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.J) && comboTempo < 0 && !stopcombo)
+        if (Input.GetKeyDown(KeyCode.J) && comboTempo < 0 && !stopcombo && !hitdame)
         {
             attacking = true;
             anim.SetTrigger("attack" + combo);
             comboTempo = comboTiming;
         }
-        else if (Input.GetKeyDown(KeyCode.J) && comboTempo > 0 && comboTempo < 0.5f && !stopcombo)
+        else if (Input.GetKeyDown(KeyCode.J) && comboTempo > 0 && comboTempo < 0.5f && !stopcombo && !hitdame)
         {
             attacking = true;
             combo++;
@@ -172,7 +172,7 @@ public class PlayerController : ObjectController
     }
     public void Roll()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !hitdame)
         {
             if (TimeCanRoll > 1.5f)
             {
@@ -217,19 +217,22 @@ public class PlayerController : ObjectController
     }
     public void AnimPlayer()
     {
-        anim.SetFloat("run", Mathf.Abs(horizontal));
-        anim.SetFloat("jump", vertical);
-        anim.SetBool("isground", isground);
-        anim.SetBool("mediate", mediate);
-        anim.SetBool("loop mediate", loopMediate);
-        anim.SetBool("defend", defend);
         if (hitdame == true)
         {
             anim.SetTrigger("hit");
         }
-        anim.SetBool("roll", CanRoll);
-        anim.SetBool("skill", skill);
-        anim.SetBool("air attack", air_attack);
+        else
+        {
+            anim.SetFloat("run", Mathf.Abs(horizontal));
+            anim.SetFloat("jump", vertical);
+            anim.SetBool("isground", isground);
+            anim.SetBool("mediate", mediate);
+            anim.SetBool("loop mediate", loopMediate);
+            anim.SetBool("roll", CanRoll);
+            anim.SetBool("skill", skill);
+            anim.SetBool("air attack", air_attack);
+            anim.SetBool("defend", defend);
+        }
     }
     public void PhongThu()
     {
@@ -260,7 +263,7 @@ public class PlayerController : ObjectController
     {
         if (collision.gameObject.tag == "enemy att")
         {
-            if(!defend || !CanRoll)
+            if (!defend || !CanRoll)
             {
                 hpPlayer.TakeDamage(40);
             }
