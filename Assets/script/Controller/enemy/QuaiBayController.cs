@@ -20,10 +20,6 @@ public class QuaiBayController : ObjectController
     public LayerMask LayerEnem;
     private void Awake()
     {
-        //this.RegisterListener(EventID.hit_dame, (sender, param) =>
-        //{
-           
-        //});
     }
     void Start()
     {
@@ -96,7 +92,6 @@ public class QuaiBayController : ObjectController
 
             }
         }
-
     }
     private void OnDrawGizmosSelected()
     {
@@ -108,7 +103,7 @@ public class QuaiBayController : ObjectController
         animator.SetBool("can attack", IsAttack);
         animator.SetBool("hit", hit);
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "player att")
         {
@@ -118,9 +113,6 @@ public class QuaiBayController : ObjectController
                 hit = true;
             }
         }
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
         if (collision.gameObject.tag == "DiemA")
         {
             if (!IsAttack)

@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using Core.Pool;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BossSlimeController : ObjectController
 {
     private Animator anim;
+    private HpEnemyController hp;
+    private Rigidbody2D rig;
     //run
     public bool run;
     private Vector3 dir;
@@ -17,19 +20,54 @@ public class BossSlimeController : ObjectController
     public bool attacking = false;
     public bool CheckAttack = false;
     public float TimeToAttack;
+    public float TimeAttackCoolDown;
 
-    private bool hit;
+    [Header("Chuyển trạng thái")]
+    public bool isPhase2 = false;
+    public bool chuyenhoa = false;
+    public float TimeChange;
+    private Vector3 initScale;
+    public Vector3 targetScale = new Vector3(1.4f, 1.4f, 1f);
+    public string NameChange = "Chuyen hoa";
+
+    public bool hit;
+    private bool death = false;
+    private float giap;
     void Start()
     {
+        rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        hp = GetComponent<HpEnemyController>();
         run = true;
         SaveSpeed = speed;
         TimeToAttack = 5;
         hit = false;
+        TimeAttackCoolDown = 1.7f;
+        initScale = transform.localScale;
+        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip.name == NameChange)
+            {
+                TimeChange = clip.length;
+                break;
+            }
+        }
     }
 
     void Update()
     {
+        if (hp.CurrentHp <= 0)
+        {
+            Debug.Log("die");
+            anim.SetTrigger("death");
+        }
+        //if (hit)
+        //{
+        //    TanCong();
+        //    anim.SetBool("hit", hit);
+        //    return;
+        //}
         distance = PlayerController.Instance.transform.position.x - this.gameObject.transform.position.x;
         dir = new Vector3(Mathf.Sign(distance), 0, 0);
         if (run && !CheckAttack)
@@ -39,33 +77,50 @@ public class BossSlimeController : ObjectController
         Flip();
         TanCong();
         AnimeBoss();
+        change();
+        CheckPhaseTransition();
     }
 
     private void AnimeBoss()
     {
         anim.SetBool("run", run);
         anim.SetBool("can attack", attacking);
+        anim.SetBool("hit", hit);
     }
 
     private void Flip()
     {
-        if (dir.x < 0)
+        if (!chuyenhoa)
         {
-            this.gameObject.transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            this.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+            if (!isPhase2)
+            {
+                if (dir.x < 0)
+                {
+                    this.gameObject.transform.localScale = new Vector3(1, 1, 1);
+                }
+                else
+                {
+                    this.gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                }
+            }
+            else
+            {
+                if (dir.x < 0)
+                {
+                    this.gameObject.transform.localScale = new Vector3(1.4f, 1.4f, 1);
+                }
+                else
+                {
+                    this.gameObject.transform.localScale = new Vector3(-1.4f, 1.4f, 1);
+                }
+            }
         }
     }
 
     private void TanCong()
     {
-        if (!hit)
-        {
-            CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distanceAttack, LayerEnem);
-        }
-        if (CheckAttack && !hit)
+        CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distanceAttack, LayerEnem);
+        if (CheckAttack)
         {
             run = false;
         }
@@ -83,9 +138,9 @@ public class BossSlimeController : ObjectController
         else
         {
             TimeToAttack += Time.deltaTime;
-            if (TimeToAttack > 1f)
+            if (TimeToAttack > TimeAttackCoolDown)
             {
-                if (CheckAttack && !hit)
+                if (CheckAttack && !chuyenhoa)
                 {
                     attacking = true;
                     TimeToAttack = 0;
@@ -93,15 +148,97 @@ public class BossSlimeController : ObjectController
 
             }
         }
-
     }
+    private void change()
+    {
+        if (hp.CurrentHp <= hp.MaxHp * 0.4f && !isPhase2)
+        {
+            chuyenhoa = true;
+            anim.SetTrigger("chuyen hoa");
+            StartCoroutine(ScaleOverTime(TimeChange));
+        }
+        if (!isPhase2)
+        {
+            giap = 0;
+        }
+        else
+        {
+            giap = 20;
+        }
+    }
+
+    private void CheckPhaseTransition()
+    {
+        if (isPhase2)
+        {
+            int phase2LayerIndex = anim.GetLayerIndex("Pharse 2");
+            anim.SetLayerWeight(phase2LayerIndex, 1);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(PosAttack.position, distanceAttack);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "player att" && !chuyenhoa)
+        {
+            hp.TakeDamage((PlayerController.Instance.hand_damage - giap));
+            if (!hit)
+            {
+                hit = true;
+            }
+        }
+        if (collision.gameObject.tag == "HB skill" && !chuyenhoa)
+        {
+            if (!hit)
+            {
+                hit = true;
+            }
+            hp.TakeDamage((PlayerController.Instance.skill_damage - giap));
+        }
+        if (collision.gameObject.tag == "HB air att" && !chuyenhoa)
+        {
+            if (!hit)
+            {
+                hit = true;
+            }
+            rig.velocity = new Vector2(Mathf.Sign(PlayerController.Instance.transform.position.x - gameObject.transform.position.x) * -8, 4);
+            hp.TakeDamage((PlayerController.Instance.air_damage - giap));
+        }
+    }
+    private IEnumerator ScaleOverTime(float duration)
+    {
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = timer / duration;
+            transform.localScale = Vector3.Lerp(initScale, targetScale, t);
+            yield return null;
+        }
+        transform.localScale = targetScale; 
     }
     private void StopAttack()
     {
         TimeToAttack = 0;
         attacking = false;
+    }
+
+    private void EndHit()
+    {
+        hit = false;
+    }
+    private void Die()
+    {   
+        SmartPool.Instance.Despawn(this.gameObject);
+    }
+    private void ChuyenTrangThai()
+    {
+        isPhase2 = true;
+        TimeToAttack = 0.8f;
+        speed = 5.5f;
+        chuyenhoa = false;
     }
 }

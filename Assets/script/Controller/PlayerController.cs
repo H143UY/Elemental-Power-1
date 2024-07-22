@@ -31,7 +31,7 @@ public class PlayerController : ObjectController
     private float TimeRollCollDown;
     public float TimeRoll;
     public float TimeCanRoll;
-    public float powerRoll = 3;
+    public float powerRoll = 3.5f;
     [Header("tan cong")]
     public int combo = 1;
     public bool attacking;
@@ -52,7 +52,6 @@ public class PlayerController : ObjectController
             Instance = this;
         this.RegisterListener(EventID.playerhit_dame, (sender, param) =>
         {
-            hitdame = true;
         });
     }
     void Start()
@@ -71,6 +70,15 @@ public class PlayerController : ObjectController
 
     void Update()
     {
+        if (hpPlayer.CurrentHp <= 0)
+        {
+            anim.SetTrigger("death");
+        }
+        if (hitdame)
+        {
+            anim.SetTrigger("hit");
+            return;
+        }
         DiChuyen();
         vertical = rig.velocity.y;
         Roll();
@@ -84,20 +92,13 @@ public class PlayerController : ObjectController
     }
     private void DiChuyen()
     {
-        if (!hitdame && !skill)
+        horizontal = 0;
+        if (Input.GetKeyDown(KeyCode.W) && isground)
         {
-            horizontal = 0;
-            if (Input.GetKeyDown(KeyCode.W) && isground)
-            {
-                Jump();
-            }
-            horizontal = Input.GetAxis("Horizontal");
-            Direction = new Vector3(horizontal, 0);
+            Jump();
         }
-        else
-        {
-            Direction = new Vector3(0, 0);
-        }
+        horizontal = Input.GetAxis("Horizontal");
+        Direction = new Vector3(horizontal, 0);
         Move(Direction);
     }
     private void Thien()
@@ -217,31 +218,26 @@ public class PlayerController : ObjectController
     }
     public void AnimPlayer()
     {
-        if (hitdame == true)
-        {
-            anim.SetTrigger("hit");
-        }
-        else
-        {
-            anim.SetFloat("run", Mathf.Abs(horizontal));
-            anim.SetFloat("jump", vertical);
-            anim.SetBool("isground", isground);
-            anim.SetBool("mediate", mediate);
-            anim.SetBool("loop mediate", loopMediate);
-            anim.SetBool("roll", CanRoll);
-            anim.SetBool("skill", skill);
-            anim.SetBool("air attack", air_attack);
-            anim.SetBool("defend", defend);
-        }
+        anim.SetFloat("run", Mathf.Abs(horizontal));
+        anim.SetFloat("jump", vertical);
+        anim.SetBool("isground", isground);
+        anim.SetBool("mediate", mediate);
+        anim.SetBool("loop mediate", loopMediate);
+        anim.SetBool("roll", CanRoll);
+        anim.SetBool("skill", skill);
+        anim.SetBool("air attack", air_attack);
+        anim.SetBool("defend", defend);
     }
     public void PhongThu()
     {
         if (Input.GetKey(KeyCode.K))
         {
+            Debug.Log("phong thu");
             defend = true;
         }
         else
         {
+            Debug.Log("het phong thu");
             defend = false;
         }
     }
@@ -255,6 +251,7 @@ public class PlayerController : ObjectController
         {
             if (!defend)
             {
+                hitdame = true;
                 hpPlayer.TakeDamage(20);
             }
         }
@@ -263,9 +260,19 @@ public class PlayerController : ObjectController
     {
         if (collision.gameObject.tag == "enemy att")
         {
-            if (!defend || !CanRoll)
+            if (!defend )
             {
                 hpPlayer.TakeDamage(40);
+                hitdame = true;
+            }
+        }
+        if (collision.gameObject.tag == "hb boss")
+        {
+            if (!defend )
+            {
+                Debug.Log("an danh");
+                hpPlayer.TakeDamage(70);
+                hitdame = true;
             }
         }
     }

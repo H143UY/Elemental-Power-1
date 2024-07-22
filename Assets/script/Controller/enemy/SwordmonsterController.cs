@@ -118,7 +118,7 @@ public class SwordmonsterController : ObjectController
         animator.SetBool("can attack", IsAttack);
         animator.SetBool("hit", hit);
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "player att")
         {
@@ -128,9 +128,6 @@ public class SwordmonsterController : ObjectController
                 hit = true;
             }
         }
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
         if (collision.gameObject.tag == "DiemA")
         {
             if (!IsAttack)

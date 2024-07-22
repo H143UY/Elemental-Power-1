@@ -12,6 +12,7 @@ TagManager:
   - enemy att
   - HB air att
   - HB skill
+  - hb boss
   layers:
   - Default
   - TransparentFX
