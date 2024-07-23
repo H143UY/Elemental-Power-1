@@ -10,7 +10,6 @@ public class CameraController : MonoBehaviour
     private void LateUpdate()
     {
         Transform player = PlayerController.Instance.transform;
-        Vector3 newPos = new Vector3(player.position.x, player.transform.position.y + CameraY, -10f);
-        transform.position = Vector3.Lerp(transform.position, newPos, SpeedCamera * Time.deltaTime);
+        Vector3 newPos = new Vector3(player.position.x, player.transform.position.y , -10f);
     }
 }

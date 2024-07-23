@@ -1,4 +1,5 @@
 ﻿using Core.Pool;
+using FirstGearGames.SmoothCameraShaker;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class BossSlimeController : ObjectController
     private Animator anim;
     private HpEnemyController hp;
     private Rigidbody2D rig;
+    public ShakeData explosionShakeData;
     //run
     public bool run;
     private Vector3 dir;
@@ -31,7 +33,6 @@ public class BossSlimeController : ObjectController
     public string NameChange = "Chuyen hoa";
 
     public bool hit;
-    private bool death = false;
     private float giap;
     void Start()
     {
@@ -217,7 +218,7 @@ public class BossSlimeController : ObjectController
             float t = timer / duration;
             transform.localScale = Vector3.Lerp(initScale, targetScale, t);
             yield return null;
-        }
+        }   
         transform.localScale = targetScale; 
     }
     private void StopAttack()
@@ -240,5 +241,9 @@ public class BossSlimeController : ObjectController
         TimeToAttack = 0.8f;
         speed = 5.5f;
         chuyenhoa = false;
+    }
+    private void Shakecamera()
+    {
+        CameraShakerHandler.Shake(explosionShakeData);
     }
 }

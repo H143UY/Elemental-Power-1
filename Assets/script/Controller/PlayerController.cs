@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerController : ObjectController
+public class PlayerEarthController : ObjectController
 {
     private HpPlayerController hpPlayer;
     private CapsuleCollider2D capsul;
-    public static PlayerController Instance;
-    public ManaController mana;
+    public static PlayerEarthController Instance;
+    private ManaController mana;
     [Header("Chỉ số người chơi")]
     public float hand_damage;
     public float skill_damage;
@@ -50,9 +50,6 @@ public class PlayerController : ObjectController
     {
         if (Instance == null)
             Instance = this;
-        this.RegisterListener(EventID.playerhit_dame, (sender, param) =>
-        {
-        });
     }
     void Start()
     {
@@ -232,12 +229,10 @@ public class PlayerController : ObjectController
     {
         if (Input.GetKey(KeyCode.K))
         {
-            Debug.Log("phong thu");
             defend = true;
         }
         else
         {
-            Debug.Log("het phong thu");
             defend = false;
         }
     }
@@ -260,7 +255,7 @@ public class PlayerController : ObjectController
     {
         if (collision.gameObject.tag == "enemy att")
         {
-            if (!defend )
+            if (!defend)
             {
                 hpPlayer.TakeDamage(40);
                 hitdame = true;
@@ -268,9 +263,8 @@ public class PlayerController : ObjectController
         }
         if (collision.gameObject.tag == "hb boss")
         {
-            if (!defend )
+            if (!defend)
             {
-                Debug.Log("an danh");
                 hpPlayer.TakeDamage(70);
                 hitdame = true;
             }
