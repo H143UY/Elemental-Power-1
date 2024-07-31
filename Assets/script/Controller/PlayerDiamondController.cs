@@ -56,7 +56,7 @@ public class PlayerDiamondController : ObjectController
         mana = GetComponent<ManaController>();
         comboTiming = 0.7f;
         comboTempo = comboTiming;
-        TimeRollCollDown = 1f;
+        TimeRollCollDown = 0.8f;
         TimeRoll = TimeRollCollDown;
         stopcombo = false;
     }

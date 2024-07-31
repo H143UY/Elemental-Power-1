@@ -6,4 +6,6 @@ public enum EventID
     //camera 
     SwichCamera1,
     SwichCamera2,
+
+    BoomBullet,
 }

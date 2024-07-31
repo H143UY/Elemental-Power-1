@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SelectedPlayerController : MonoBehaviour
 {
@@ -73,6 +74,11 @@ public class SelectedPlayerController : MonoBehaviour
             current--;
         }
         ShowPlayerFromList();
+    }
+    public void OnclickStartGame()
+    {
+        CharacterManager.Instance.SelectCharacter(current);
+        SceneManager.LoadScene("Man1"); 
     }
 
 }

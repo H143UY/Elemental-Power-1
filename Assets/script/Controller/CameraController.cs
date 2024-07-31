@@ -5,11 +5,22 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public float SpeedCamera;
-    public float CameraY;
-
+    private Vector3 transPlayer;
+    private GameObject player;
+    private void Start()
+    {
+        player = GameObject.FindWithTag("Player");
+    }
+    private void Update()
+    {
+        if(player != null)
+        {
+            transPlayer = player.transform.position;
+        }
+    }
     private void LateUpdate()
     {
-        Transform player = PlayerController.Instance.transform;
-        Vector3 newPos = new Vector3(player.position.x, player.transform.position.y , -10f);
+        Vector3 newPos = new Vector3(transPlayer.x, transPlayer.y, -10f);
+        this.gameObject.transform.position = newPos;
     }
 }

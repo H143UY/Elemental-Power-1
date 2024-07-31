@@ -8,7 +8,7 @@ public class PlayerController : ObjectController
     private HpPlayerController hpPlayer;
     private CapsuleCollider2D capsul;
     public static PlayerController Instance;
-    public ManaController mana;
+    private ManaController mana;
     [Header("Chỉ số người chơi")]
     public float hand_damage;
     public float skill_damage;
