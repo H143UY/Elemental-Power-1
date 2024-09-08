@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class golbinController : ObjectController
+public class goblinController : ObjectController
 {
     private HpEnemyController hpEnemyController;
     private Vector3 dir;
@@ -13,7 +13,7 @@ public class golbinController : ObjectController
     [Header(" patrolling")]
     public bool run;
     public bool followPlayer;
-    private bool Stop;
+    public bool Stop;
     private float TimeToStop;
     [Header(" bi tan cong")]
     public bool hit = false;
@@ -25,14 +25,19 @@ public class golbinController : ObjectController
     public float distance;
     public LayerMask LayerEnem;
     private bool die = false;
-    
+    private GameObject player;
+
     private void Awake()
     {
-        
+        this.RegisterListener(EventID.FindPlayer, (sender, param) =>
+        {
+            player = GameObject.FindWithTag("Player");
+        });
     }
+
     void Start()
     {
-        capsul = GetComponent<CapsuleCollider2D>(); 
+        capsul = GetComponent<CapsuleCollider2D>();
         hpEnemyController = GetComponent<HpEnemyController>();
         rig = GetComponent<Rigidbody2D>();
         CheckAttack = false;
@@ -49,7 +54,7 @@ public class golbinController : ObjectController
     void Update()
     {
         // check die
-        if(hpEnemyController.CurrentHp <= 0)
+        if (hpEnemyController.CurrentHp <= 0)
         {
             run = false;
             animator.SetTrigger("Die");
@@ -71,21 +76,23 @@ public class golbinController : ObjectController
         if (Stop)
         {
             TimeToStop += Time.deltaTime;
-            if(TimeToStop > 1.5f)
+            if (TimeToStop > 1.5f)
             {
+                dir = new Vector3(-dir.x, 0, 0);
                 Stop = false;
                 TimeToStop = 0;
                 run = true;
             }
         }
     }
+
     public void FolowPl()
     {
         if (followPlayer)
         {
             speed = 5.5f;
-            float dirPlayer = PlayerController.Instance.transform.position.x - this.gameObject.transform.position.x;
-            if(dirPlayer == distance)
+            float dirPlayer = player.transform.position.x - this.gameObject.transform.position.x;
+            if (dirPlayer == distance)
             {
                 run = false;
             }
@@ -96,31 +103,32 @@ public class golbinController : ObjectController
             dir = new Vector3(Mathf.Sign(dirPlayer), 0, 0);
         }
     }
+
     private void Flip()
     {
         if (dir.x > 0 && !die)
         {
             this.gameObject.transform.localScale = new Vector3(1, 1, 1);
-
         }
         else if (dir.x < 0 && !die)
         {
             this.gameObject.transform.localScale = new Vector3(-1, 1, 1);
         }
     }
+
     private void Check()
     {
         if (!hit && followPlayer)
         {
             CheckAttack = Physics2D.OverlapCircle(PosAttack.position, distance, LayerEnem);
         }
-        //Check đánh
-        if (IsAttack == true)
+        // Kiểm tra tấn công
+        if (IsAttack)
         {
             animator.SetTrigger("is attack");
             run = false;
         }
-        else // nếu chưa đánh thì chạy vào đây để check đánh
+        else // Nếu chưa tấn công thì kiểm tra tấn công
         {
             TimeToAttack += Time.deltaTime;
             if (TimeToAttack > 1f)
@@ -132,50 +140,36 @@ public class golbinController : ObjectController
                 }
             }
         }
-
     }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(PosAttack.position, distance);
     }
+
     void AnimEnemy()
     {
         animator.SetBool("run", run);
         animator.SetBool("can attack", IsAttack);
         animator.SetBool("hit", hit);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "player att")
         {
-            hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
+            hpEnemyController.TakeDamage(35);
             if (!hit)
             {
                 hit = true;
             }
         }
-        if (collision.gameObject.tag == "DiemA")
+        if (collision.gameObject.tag == "DiemA" || collision.gameObject.tag == "DiemB")
         {
             if (!IsAttack && !followPlayer && !Stop)
             {
                 run = false;
                 Stop = true;
-                if (!Stop)
-                {
-                    dir = new Vector3(1, 0, 0);
-                }
-            }
-        }
-        if (collision.gameObject.tag == "DiemB")
-        {
-            if (!IsAttack && !followPlayer && !Stop)
-            {
-                run = false;
-                Stop = true;
-                if (!Stop)
-                {
-                    dir = new Vector3(-1, 0, 0);
-                }
             }
         }
         if (collision.gameObject.tag == "HB skill")
@@ -184,7 +178,7 @@ public class golbinController : ObjectController
             {
                 hit = true;
             }
-            hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
+            hpEnemyController.TakeDamage(1000);
             rig.AddForce(new Vector2(0, 1) * 10, ForceMode2D.Impulse);
         }
         if (collision.gameObject.tag == "HB air att")
@@ -193,24 +187,26 @@ public class golbinController : ObjectController
             {
                 hit = true;
             }
-            rig.velocity = new Vector2(Mathf.Sign(PlayerController.Instance.transform.position.x - gameObject.transform.position.x) * -8, 4);
-            hpEnemyController.TakeDamage(PlayerController.Instance.air_damage);
+            rig.velocity = new Vector2(player.transform.localScale.x * 3, 4);
+            hpEnemyController.TakeDamage(300);
         }
     }
+
     private void StopAttack()
     {
         IsAttack = false;
         run = true;
     }
+
     private void Hitfalse()
     {
         hit = false;
         followPlayer = true; // bị đánh xong thì đuổi theo player
         run = true;
     }
+
     private void Die()
     {
         SmartPool.Instance.Despawn(this.gameObject);
     }
 }
-

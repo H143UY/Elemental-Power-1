@@ -229,7 +229,10 @@ namespace FirstGearGames.SmoothCameraShaker
                 );
         }
 
-        private bool _first = true;
+        //private bool _first = true;   ///
+
+
+
         /// <summary>
         /// Returns a new offset for this instnace.
         /// </summary>

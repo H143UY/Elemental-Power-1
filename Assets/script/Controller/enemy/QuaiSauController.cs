@@ -5,23 +5,41 @@ using UnityEngine;
 
 public class QuaiSauController : MonoBehaviour
 {
+    private HpEnemyController hpEnemyController;
     private Animator anim;
     private GameObject player;
     private bool attack;
-    private float attackTime;
+    public float attackTime;
     private bool hit;
     public GameObject bullet;
     public Transform posShoot;
+    private bool die;
+    private void Awake()
+    {
+        this.RegisterListener(EventID.FindPlayer, (sender, param) =>
+        {
+            player = GameObject.FindWithTag("Player");
+        });
+    }
     void Start()
     {
-        anim =  GetComponent<Animator>();
-        player = GameObject.FindWithTag("Player");
+        die = false;
+        hpEnemyController = GetComponent<HpEnemyController>();
+        anim = GetComponent<Animator>();
         attackTime = 0;
         attack = false;
     }
 
     void Update()
     {
+        if (hpEnemyController.CurrentHp <= 0)
+        {
+            die = true;
+        }
+        if (die)
+        {
+            anim.SetTrigger("die");
+        }
         Flip();
         Anim();
         Att();
@@ -49,14 +67,17 @@ public class QuaiSauController : MonoBehaviour
         {
             attackTime += Time.deltaTime;
         }
-        if (attackTime > 2)
+        if (attackTime > 1.85f)
         {
-            attack = true;
+            if (!hit && !die)
+            {
+                attack = true;
+            }
         }
     }
     void Shoot()
     {
-        Instantiate(bullet,posShoot.position, Quaternion.identity); 
+        Instantiate(bullet, posShoot.position, Quaternion.identity);
     }
     void StopAtt()
     {
@@ -66,5 +87,36 @@ public class QuaiSauController : MonoBehaviour
     void stophit()
     {
         hit = false;
+    }
+    void Death()
+    {
+        SmartPool.Instance.Despawn(this.gameObject);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "player att")
+        {
+            hpEnemyController.TakeDamage(35);
+            if (!hit)
+            {
+                hit = true;
+            }
+        }
+        if (collision.gameObject.tag == "HB skill")
+        {
+            if (!hit)
+            {
+                hit = true;
+            }
+            hpEnemyController.TakeDamage(1000);
+        }
+        if (collision.gameObject.tag == "HB air att")
+        {
+            if (!hit)
+            {
+                hit = true;
+            }
+            hpEnemyController.TakeDamage(300);
+        }
     }
 }

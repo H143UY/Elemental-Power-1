@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour
     }
     private void Update()
     {
-        if(player != null)
+        if (player != null)
         {
             transPlayer = player.transform.position;
         }

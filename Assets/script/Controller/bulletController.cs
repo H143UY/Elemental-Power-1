@@ -57,12 +57,6 @@ public class bulletController : BulletController
         if (collision.gameObject.tag != this.gameObject.tag)
         {
             Boom = true;
-            //HpPlayerController hpPlayer = collision.gameObject.GetComponent<HpPlayerController>();
-            //if (hpPlayer != null)
-            //{
-            //    hpPlayer.TakeDamage(40);
-            //}
         }
-
     }
 }

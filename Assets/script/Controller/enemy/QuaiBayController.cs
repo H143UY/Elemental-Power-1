@@ -1,3 +1,4 @@
+using Core.Pool;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class QuaiBayController : ObjectController
     public Transform PosAttack;
     public float distance;
     public LayerMask LayerEnem;
+    private GameObject player;
     private void Awake()
     {
     }
@@ -30,10 +32,18 @@ public class QuaiBayController : ObjectController
         fly = true;
         animator = GetComponent<Animator>();
         dir = new Vector3(-1, 0, 0);
+        player = GameObject.FindWithTag("Player");
     }
 
     void Update()
     {
+        if(hpEnemyController != null)
+        {
+            if(hpEnemyController.CurrentHp <= 0)
+            {
+                SmartPool.Instance.Despawn(this.gameObject);
+            }
+        }
         if (fly)
         {
             Move(dir);
@@ -107,7 +117,7 @@ public class QuaiBayController : ObjectController
     {
         if (collision.gameObject.tag == "player att")
         {
-            hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
+            hpEnemyController.TakeDamage(35);
             if (!hit)
             {
                 hit = true;
@@ -130,7 +140,7 @@ public class QuaiBayController : ObjectController
         }
         if (collision.gameObject.tag == "HB skill")
         {
-            hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
+            hpEnemyController.TakeDamage(1000);
             if (!hit)
             {
                 hit = true;
@@ -138,7 +148,7 @@ public class QuaiBayController : ObjectController
         }
         if (collision.gameObject.tag == "HB air att")
         {
-            hpEnemyController.TakeDamage(PlayerController.Instance.air_damage);
+            hpEnemyController.TakeDamage(300);
             if (!hit)
             {
                 hit = true;

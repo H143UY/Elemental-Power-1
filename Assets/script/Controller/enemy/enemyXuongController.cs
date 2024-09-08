@@ -20,10 +20,12 @@ public class enemyXuongController : ObjectController
     private bool DuocPhongThu = true;
     private bool hit = false;
     public float TimeCanShield;
+    private GameObject player;
     private void Awake()
     {
-        this.RegisterListener(EventID.die, (sender, param) =>
+        this.RegisterListener(EventID.FindPlayer, (sender, param) =>
         {
+            player = GameObject.FindWithTag("Player");
         });
     }
     private void Start()
@@ -84,7 +86,7 @@ public class enemyXuongController : ObjectController
     {
         if (Shield || attackPlayer)
         {
-            if (PlayerController.Instance.transform.position.x > this.gameObject.transform.position.x)
+            if (player.transform.position.x > this.gameObject.transform.position.x)
             {
                 this.gameObject.transform.localScale = new Vector3(1, 1, 1);
             }
@@ -139,7 +141,7 @@ public class enemyXuongController : ObjectController
             }
             else
             {
-                hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
+                hpEnemyController.TakeDamage(35);
             }
         }
         if (collision.gameObject.tag == "DiemA")
@@ -153,7 +155,7 @@ public class enemyXuongController : ObjectController
         if (collision.gameObject.tag == "HB skill")
         {
             Shield = false;
-            hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
+            hpEnemyController.TakeDamage(1000);
             rig.AddForce(new Vector2(0, 1) * 10f, ForceMode2D.Impulse);
         }
         if (collision.gameObject.tag == "HB air att")
@@ -179,8 +181,8 @@ public class enemyXuongController : ObjectController
             }
             else
             {
-                hpEnemyController.TakeDamage(PlayerController.Instance.air_damage);
-                rig.velocity = new Vector2(Mathf.Sign(PlayerController.Instance.transform.position.x - gameObject.transform.position.x) * -8, 4);
+                hpEnemyController.TakeDamage(300);
+                rig.velocity = new Vector2(player.transform.localScale.x * 3, 3);
             }
         }
     }

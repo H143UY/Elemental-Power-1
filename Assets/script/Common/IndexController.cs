@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class IndexController : MonoBehaviour
 {
     public Slider slider;
-
     public void SetMaxIndex(float MaxIndex)
     {
         slider.maxValue = MaxIndex;

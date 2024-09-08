@@ -9,12 +9,11 @@ public class SelectedPlayerController : MonoBehaviour
 {
     public PlayerModelController[] playermodel;
     public Transform transpot;
-    public List<GameObject> players;
+    private List<GameObject> players;
     private int current;
     [Header("thông tin")]
     public TextMeshProUGUI Name;
     public TextMeshProUGUI HomeTown;
-    public TextMeshProUGUI Damage;
     public TextMeshProUGUI infor;
     public TextMeshProUGUI DiemManh;
     public TextMeshProUGUI DiemYeu;
@@ -22,17 +21,16 @@ public class SelectedPlayerController : MonoBehaviour
     {
         Name = Name.GetComponent<TextMeshProUGUI>();
         HomeTown = HomeTown.GetComponent<TextMeshProUGUI>();
-        Damage = Damage.GetComponent<TextMeshProUGUI>();
         infor = infor.GetComponent<TextMeshProUGUI>();
         DiemManh = DiemManh.GetComponent<TextMeshProUGUI>();
         DiemYeu = DiemYeu.GetComponent<TextMeshProUGUI>();
     }
-    void Start()
+    public void SpawnChosePlayer()
     {
-        players = new List<GameObject>();   
+        players = new List<GameObject>();
         foreach (var player in playermodel)
         {
-            GameObject go = Instantiate(player.Player, transpot.position, Quaternion.identity);
+            GameObject go = SmartPool.Instance.Spawn(player.Player, transpot.position, transpot.rotation);
             go.SetActive(false);
             go.transform.SetParent(transpot);
             players.Add(go);
@@ -44,15 +42,14 @@ public class SelectedPlayerController : MonoBehaviour
         players[current].SetActive(true);
         Name.text = "Name :" + playermodel[current].Name;
         HomeTown.text = "HomeTown :" + playermodel[current].HomeTown;
-        Damage.text = "Damage :" + playermodel[current].Damage;
-        infor.text = "Thông tin:" + playermodel[current].Infoamtion;
-        DiemManh.text = "Điểm mạnh :" + playermodel[current].DiemManh;
-        DiemYeu.text = "Điểm yếu :" + playermodel[current].DiemYeu;
+        infor.text = "Infomation:" + playermodel[current].Infoamtion;
+        DiemManh.text = "Strengths :" + playermodel[current].DiemManh;
+        DiemYeu.text = "Weakness :" + playermodel[current].DiemYeu;
     }
     public void OnclickNext()
     {
         players[current].SetActive(false);
-        if(current <players.Count -1)
+        if (current < players.Count - 1)
         {
             current++;
         }
@@ -65,7 +62,7 @@ public class SelectedPlayerController : MonoBehaviour
     public void OnclickPrev()
     {
         players[current].SetActive(false);
-        if(current == 0)
+        if (current == 0)
         {
             current = players.Count - 1;
         }
@@ -75,10 +72,10 @@ public class SelectedPlayerController : MonoBehaviour
         }
         ShowPlayerFromList();
     }
-    public void OnclickStartGame()
+    public void OnclickChose()
     {
+        players[current].SetActive(false);
         CharacterManager.Instance.SelectCharacter(current);
-        SceneManager.LoadScene("Man1"); 
     }
-
+    
 }

@@ -13,6 +13,14 @@ TagManager:
   - HB air att
   - HB skill
   - hb boss
+  - Checkpl
+  - WinGame
+  - BulletFire
+  - StopBoss
+  - dan enemy
+  - start pos
+  - end pos
+  - Boss
   layers:
   - Default
   - TransparentFX
@@ -53,9 +61,6 @@ TagManager:
   - name: background1
     uniqueID: 517396789
     locked: 0
-  - name: tuong
-    uniqueID: 1147805025
-    locked: 0
   - name: background2
     uniqueID: 3387438485
     locked: 0
@@ -64,6 +69,12 @@ TagManager:
     locked: 0
   - name: cua
     uniqueID: 4036385689
+    locked: 0
+  - name: tuong
+    uniqueID: 1147805025
+    locked: 0
+  - name: san2
+    uniqueID: 1762751379
     locked: 0
   - name: san
     uniqueID: 2069840855

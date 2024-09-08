@@ -22,8 +22,13 @@ public class SwordmonsterController : ObjectController
     public Transform PosAttack;
     public float distance;
     public LayerMask LayerEnem;
+    private GameObject player;
     private void Awake()
     {
+        this.RegisterListener(EventID.FindPlayer, (sender, param) =>
+        {
+            player = GameObject.FindWithTag("Player");
+        });
     }
     void Start()
     {
@@ -56,8 +61,8 @@ public class SwordmonsterController : ObjectController
             animator.SetTrigger("die");
             CheckAttack = false;
             IsAttack = false;
-            boxcolider.enabled = false;
-            rig.gravityScale = 0;
+            run = false;    
+            rig.isKinematic = true;
         }
     }
     private void Flip()
@@ -122,7 +127,7 @@ public class SwordmonsterController : ObjectController
     {
         if (collision.gameObject.tag == "player att")
         {
-            hpEnemyController.TakeDamage(PlayerController.Instance.hand_damage);
+            hpEnemyController.TakeDamage(35);
             if (!hit)
             {
                 hit = true;
@@ -149,7 +154,7 @@ public class SwordmonsterController : ObjectController
             {
                 hit = true;
             }
-            hpEnemyController.TakeDamage(PlayerController.Instance.skill_damage);
+            hpEnemyController.TakeDamage(1000);
             rig.AddForce(new Vector2(0, 1) * 10, ForceMode2D.Impulse);
         }
         if (collision.gameObject.tag == "HB air att")
@@ -158,8 +163,8 @@ public class SwordmonsterController : ObjectController
             {
                 hit = true;
             }
-            rig.velocity = new Vector2(Mathf.Sign(PlayerController.Instance.transform.position.x - gameObject.transform.position.x) * -8, 4);
-            hpEnemyController.TakeDamage(PlayerController.Instance.air_damage);
+            rig.velocity = new Vector2(player.transform.localScale.x *3, 3);
+            hpEnemyController.TakeDamage(300);
         }
     }
     private void StopAttack()

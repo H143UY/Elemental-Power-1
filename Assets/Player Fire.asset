@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 553660c951ab4fc48986ce5ad37daa40, type: 3}
+  m_Name: Player Fire
+  m_EditorClassIdentifier: 
+  Name: Blaze
+  HomeTown: 'Ignis Village, south '
+  DiemManh: Blaze has speed and a fast cooldown.
+  DiemYeu: Blaze's health and defense aren't too good
+  Infoamtion: Blaze, a young man with the ability to control fire, is always afraid
+    of his power and lives aloof from everyone. When a mysterious shadow attacks
+    Ignis village, Blaze is forced to face his fears to protect his homeland. During
+    the fierce battle, he realized that the fire within him was not an enemy, but
+    a source of endless power when controlled.  Blaze defeats the shadow, saves the
+    village, and learns to accept himself. From then on, he became a protector, using
+    his fire to protect those he loved.
+  Player: {fileID: 6117284909280938546, guid: ca85eb4d525c91c4dab3f7b7f1845efb, type: 3}
+  AvatarPlayer: {fileID: 21300000, guid: 85f85d0bfab3fe54dba5a38600000448, type: 3}
+  ImgAirAtt: {fileID: 21300000, guid: b3cc25cc0bad58e4884e0efd5fabf059, type: 3}
+  ImgSkill: {fileID: 21300000, guid: c2512fe531eaabc4690c18cd9729aec4, type: 3}
+  player: {fileID: 0}

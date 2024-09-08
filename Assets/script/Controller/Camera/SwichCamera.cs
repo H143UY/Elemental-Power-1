@@ -7,6 +7,7 @@ public class SwichCamera : MonoBehaviour
 {
     public CinemachineVirtualCamera cam1;
     public CinemachineVirtualCamera cam2;
+    public CinemachineVirtualCamera cam3;
     private void Awake()
     {    
         this.RegisterListener(EventID.SwichCamera1, (sender, param) =>
@@ -16,6 +17,10 @@ public class SwichCamera : MonoBehaviour
         this.RegisterListener(EventID.SwichCamera2, (sender, param) =>
         {
             CameraManager.SwichCamera(cam2);
+        });
+        this.RegisterListener(EventID.SwichCamera3, (sender, param) =>
+        {
+            CameraManager.SwichCamera(cam3);
         });
     }
 }

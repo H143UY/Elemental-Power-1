@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3628685959876251138}
   m_Layer: 0
   m_Name: bullet fire
-  m_TagString: Untagged
+  m_TagString: BulletFire
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1950636839
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: -1918894655, guid: 086806af8bf5269469d4fc0a7b3bc152, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee624e7437ae14428d32b41ba676129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
+  speed: 9
   timeBoom: 0
   dirtoPlayer: {x: 0, y: 0, z: 0}
 --- !u!58 &-219523899032102305

@@ -5,14 +5,13 @@ using UnityEngine;
 public class CharacterManager : MonoBehaviour
 {
     public static CharacterManager Instance;
-    public int selectedCharacterIndex = -1; // Chỉ số mặc định khi chưa chọn nhân vật nào
-
+    public int selectedCharacterIndex;
     private void Awake()
     {
+        selectedCharacterIndex = 0;
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
