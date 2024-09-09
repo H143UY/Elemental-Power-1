@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 0}
-  MaxHp: 700
+  MaxHp: 800
   CurrentHp: 0
 --- !u!1 &7422224886325272126
 GameObject:

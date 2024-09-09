@@ -400,8 +400,6 @@ MonoBehaviour:
   speed: 7
   JumpForce: 20
   isground: 0
-  mediate: 0
-  loopMediate: 0
   CanRoll: 0
   TimeRoll: 0
   TimeCanRoll: 0
@@ -428,7 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 0}
-  MaxHp: 800
+  MaxHp: 900
   CurrentHp: 0
 --- !u!95 &754515181402110422
 Animator:

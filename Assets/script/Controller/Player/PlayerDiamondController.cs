@@ -74,8 +74,8 @@ public class PlayerDiamondController : ObjectController
         TimeRoll = TimeRollCollDown;
         stopcombo = false;
 
-        TimeToSkill = 5f;
-        Time_Air_Att = 3f;
+        TimeToSkill = 12f;
+        Time_Air_Att = 8f;
         CanSkill = true;
         CanAir_Att = true;
         StopPlayer = false;
